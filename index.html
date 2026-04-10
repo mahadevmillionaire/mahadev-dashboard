@@ -3,135 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mahadev | Live Portfolio Monitor</title>
+    <title>Mahadev | Full Terminal Monitor</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #c5a059;
-            --secondary: #2c5ff7;
             --bg: #0f111a;
             --card: rgba(255, 255, 255, 0.05);
             --text: #ffffff;
             --success: #00ff88;
             --danger: #ff4d4d;
-            --warning: #ffcc00;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 50px; }
+        .container { width: 100%; max-width: 500px; padding: 15px; margin: 0 auto; }
         
-        .container { width: 100%; max-width: 500px; padding: 20px; }
+        header { text-align: center; margin-bottom: 20px; }
+        .logo { font-size: 24px; font-weight: 600; background: linear-gradient(45deg, var(--primary), #fff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Main Cards */
+        .stats-main { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .card { background: var(--card); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; text-align: center; }
+        .card-label { font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 5px; }
+        .card-value { font-size: 20px; font-weight: 600; }
+
+        /* Detail Table */
+        .detail-card { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 15px; }
+        .detail-title { font-size: 12px; font-weight: 600; color: var(--primary); margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
         
-        header { text-align: center; margin-bottom: 25px; padding-top: 10px; }
-        .logo { font-size: 24px; font-weight: 600; background: linear-gradient(45deg, var(--primary), #fff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
-        .sub-logo { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 5px; }
+        .stat-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .stat-row:last-child { border: none; }
+        .stat-label { color: rgba(255,255,255,0.6); }
+        .stat-val { font-weight: 600; }
+        .stat-val.buy { color: var(--success); }
+        .stat-val.sell { color: var(--danger); }
 
-        .account-box {
-            background: rgba(255,255,255,0.03);
-            border-radius: 15px;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-        
-        select {
-            background: #1a1f3c; color: white; border: 1px solid var(--primary);
-            padding: 10px; border-radius: 10px; outline: none; width: 100%; font-size: 16px;
-        }
+        /* Summary Bar */
+        .summary-bar { background: rgba(0,0,0,0.3); border-radius: 15px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .ea-status-pill { display: flex; align-items: center; font-size: 11px; font-weight: 600; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
+        .dot.online { background: var(--success); box-shadow: 0 0 10px var(--success); }
+        .dot.offline { background: var(--danger); }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .card { background: var(--card); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 22px 18px; border-radius: 20px; text-align: center; }
-        .card.full { grid-column: span 2; }
-        .card-label { font-size: 11px; text-transform: uppercase; color: rgba(255, 255, 255, 0.4); margin-bottom: 8px; }
-        .card-value { font-size: 24px; font-weight: 600; }
-
-        /* EA Actual Status Badge */
-        .status-badge {
-            margin: 20px 0; padding: 25px; border-radius: 25px;
-            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
-            text-align: center;
-        }
-        .ea-status-pill {
-            display: inline-flex; align-items: center;
-            padding: 6px 18px; border-radius: 20px; font-size: 13px; font-weight: 600;
-            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
-        }
-        .dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 10px; }
-        .dot.online { background: var(--success); box-shadow: 0 0 15px var(--success); }
-        .dot.offline { background: var(--danger); box-shadow: 0 0 15px var(--danger); }
-
-        .monitor-label { font-size: 10px; color: var(--primary); margin-bottom: 15px; text-transform: uppercase; font-weight: 600; }
-
-        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 100; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s; }
+        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:100; display:flex; justify-content:center; align-items:center; }
         .shimer { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        
-        .footer-info { text-align: center; margin-top: 20px; font-size: 11px; color: rgba(255,255,255,0.2); }
     </style>
 </head>
 <body>
     <div id="loader"><div class="shimer"></div></div>
     <div class="container">
-        <header>
-            <div class="logo">MAHADEV MONITOR</div>
-            <div class="sub-logo">LIVE ACCOUNT TRACKING UNIT</div>
-        </header>
+        <header><div class="logo">MAHADEV MONITOR</div></header>
 
-        <div class="account-box">
-            <select id="acc-select" onchange="changeAccount()">
-                <option value="">- SELECT ACCOUNT -</option>
-            </select>
+        <select id="acc-select" onchange="changeAccount()" style="width:100%; padding:12px; background:#1a1f3c; color:white; border-radius:10px; border:1px solid var(--primary); margin-bottom:15px;">
+            <option value="">- SELECT ACCOUNT -</option>
+        </select>
+
+        <div class="summary-bar">
+            <div class="ea-status-pill"><div id="ea-dot" class="dot offline"></div> <span id="ea-stat-text">OFFLINE</span></div>
+            <div style="font-size: 10px; color: grey;">Sync: <span id="last-update">-</span></div>
         </div>
 
-        <div class="status-badge">
-            <div class="monitor-label">Real-time Station Status</div>
-            <div class="ea-status-pill">
-                <div id="ea-dot" class="dot offline"></div>
-                EA STATUS: <span id="ea-stat-text" style="margin-left:5px">OFFLINE</span>
-            </div>
-            <p style="font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 15px;">(Reports actual trading status from MT5 Terminal)</p>
+        <div class="stats-main">
+            <div class="card"><div class="card-label">Equity</div><div class="card-value" id="val-equity" style="color:var(--primary)">$0</div></div>
+            <div class="card"><div class="card-label">Profit Today</div><div class="card-value" id="val-profit" style="color:var(--success)">$0</div></div>
         </div>
 
-        <div class="stats-grid">
-            <div class="card"><div class="card-label">Balance</div><div class="card-value" id="val-balance">$ 0,00</div></div>
-            <div class="card"><div class="card-label">Equity</div><div class="card-value" id="val-equity" style="color: var(--primary)">$ 0,00</div></div>
-            <div class="card full"><div class="card-label">Profit Today</div><div class="card-value" id="val-profit" style="color: var(--success)">+$ 0.00</div></div>
+        <div class="detail-card">
+            <div class="detail-title">OVERALL POSITIONS</div>
+            <div class="stat-row"><span class="stat-label">Total Buy Orders</span><span class="stat-val buy" id="val-buy-pos">0</span></div>
+            <div class="stat-row"><span class="stat-label">Total Sell Orders</span><span class="stat-val sell" id="val-sell-pos">0</span></div>
+            <div class="stat-row"><span class="stat-label">Total Buy Lots</span><span class="stat-val buy" id="val-buy-lots">0.00</span></div>
+            <div class="stat-row"><span class="stat-label">Total Sell Lots</span><span class="stat-val sell" id="val-sell-lots">0.00</span></div>
         </div>
 
-        <div class="footer-info">
-            <p>Last Sync: <span id="last-update">-</span></p>
-            <p style="margin-top:5px; color:rgba(255,255,255,0.1)">Monitoring Only Mode 활성화됨</p>
+        <div class="detail-card">
+            <div class="detail-title">SYSTEM BREAKDOWN</div>
+            <div class="stat-row"><span class="stat-label">Regular Buy / Sell</span><span class="stat-val"><span id="val-reg-buy">0</span> / <span id="val-reg-sell">0</span></span></div>
+            <div class="stat-row"><span class="stat-label">AutoLot Buy / Sell</span><span class="stat-val"><span id="val-auto-buy">0</span> / <span id="val-auto-sell">0</span></span></div>
+            <div class="stat-row"><span class="stat-label">Locked Buy / Sell</span><span class="stat-val"><span id="val-lock-buy">0</span> / <span id="val-lock-sell">0</span></span></div>
         </div>
+
+        <p style="text-align: center; font-size: 9px; color: rgba(255,255,255,0.1);">Monitoring Only Mode v7.03</p>
     </div>
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwuBm6kirDBRUqqbcKXYJsAj9f0nR_kYFmECYHeLzQFoDT53g3ATOqe80mg7qAjWn-8lw/exec";
         let currentAcc = "";
-        const accSelect = document.getElementById('acc-select');
-        const eaDot = document.getElementById('ea-dot');
-        const eaStatText = document.getElementById('ea-stat-text');
-
+        
         async function fetchAccounts() {
             try {
                 const res = await fetch(WEB_APP_URL + "?action=get_accounts");
                 const accounts = await res.json();
-                accSelect.innerHTML = '<option value="">- SELECT ACCOUNT -</option>';
+                const sel = document.getElementById('acc-select');
                 accounts.forEach(acc => {
                     const opt = document.createElement('option');
-                    opt.value = acc; opt.innerText = "Account ID: " + acc;
-                    accSelect.appendChild(opt);
+                    opt.value = acc; opt.innerText = "Account: " + acc;
+                    sel.appendChild(opt);
                 });
-                document.getElementById('loader').style.opacity = '0';
-                setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
-            } catch (e) {
-                console.error("Fetch Accounts Failed", e);
-            }
+                document.getElementById('loader').style.display = 'none';
+            } catch (e) { console.error(e); }
         }
 
-        function changeAccount() {
-            currentAcc = accSelect.value;
-            if(currentAcc) updateDashboard();
-        }
+        function changeAccount() { currentAcc = document.getElementById('acc-select').value; updateDashboard(); }
 
         async function updateDashboard() {
             if(!currentAcc) return;
@@ -139,26 +114,31 @@
                 const res = await fetch(WEB_APP_URL + "?action=get_status&acc=" + currentAcc);
                 const data = await res.json();
                 
-                document.getElementById('val-balance').innerText = "$" + Number(data.balance).toLocaleString();
                 document.getElementById('val-equity').innerText = "$" + Number(data.equity).toLocaleString();
-                document.getElementById('val-profit').innerText = (data.profit >= 0 ? "+" : "") + "$" + Number(data.profit).toFixed(2);
+                document.getElementById('val-profit').innerText = "$" + Number(data.daily_profit).toFixed(2);
                 document.getElementById('last-update').innerText = new Date().toLocaleTimeString();
                 
-                // อัปเดตสถานะจริงจาก EA
-                const realStatus = data.ea_status ? data.ea_status.toUpperCase() : "OFFLINE";
-                eaStatText.innerText = realStatus;
-                if(realStatus.includes("RUNNING") || realStatus.includes("TRADING")) {
-                    eaDot.className = "dot online";
-                    eaStatText.style.color = "var(--success)";
-                } else {
-                    eaDot.className = "dot offline";
-                    eaStatText.style.color = "var(--danger)";
-                }
-            } catch (e) { console.error("Update Failed", e); }
+                // Detailed Stats
+                document.getElementById('val-buy-pos').innerText = data.buy_pos || 0;
+                document.getElementById('val-sell-pos').innerText = data.sell_pos || 0;
+                document.getElementById('val-buy-lots').innerText = (data.buy_lots || 0).toFixed(2);
+                document.getElementById('val-sell-lots').innerText = (data.sell_lots || 0).toFixed(2);
+                
+                document.getElementById('val-reg-buy').innerText = data.reg_buy || 0;
+                document.getElementById('val-reg-sell').innerText = data.reg_sell || 0;
+                document.getElementById('val-auto-buy').innerText = data.auto_buy || 0;
+                document.getElementById('val-auto-sell').innerText = data.auto_sell || 0;
+                document.getElementById('val-lock-buy').innerText = data.lock_buy || 0;
+                document.getElementById('val-lock-sell').innerText = data.lock_sell || 0;
+
+                const status = data.status || "OFFLINE";
+                document.getElementById('ea-stat-text').innerText = status;
+                document.getElementById('ea-dot').className = (status === "RUNNING") ? "dot online" : "dot offline";
+            } catch (e) { console.error(e); }
         }
 
         fetchAccounts();
-        setInterval(updateDashboard, 15000); // อัปเดตทุก 15 วินาที
+        setInterval(updateDashboard, 15000);
     </script>
 </body>
 </html>
