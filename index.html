@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mahadev | Multi-Account Control</title>
+    <title>Mahadev | Premium Cloud Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #c5a059; /* Gold */
-            --secondary: #2c5ff7; /* Blue */
+            --primary: #c5a059;
+            --secondary: #2c5ff7;
             --bg: #0f111a;
             --card: rgba(255, 255, 255, 0.05);
             --text: #ffffff;
             --success: #00ff88;
             --danger: #ff4d4d;
+            --warning: #ffcc00;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
@@ -22,52 +23,60 @@
         .container { width: 100%; max-width: 500px; padding: 20px; }
         
         header { text-align: center; margin-bottom: 20px; padding-top: 10px; }
-        .logo { font-size: 24px; font-weight: 600; background: linear-gradient(45deg, var(--primary), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
+        .logo { font-size: 26px; font-weight: 600; background: linear-gradient(45deg, var(--primary), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
 
-        /* Account Selector */
         .account-box {
             background: rgba(255,255,255,0.03);
             border-radius: 15px;
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            border: 1px solid rgba(255,255,255,0.08);
         }
         
         select {
-            background: #1a1f3c;
-            color: white;
-            border: 1px solid var(--primary);
-            padding: 8px 15px;
-            border-radius: 10px;
-            outline: none;
-            width: 100%;
-            font-size: 16px;
+            background: #1a1f3c; color: white; border: 1px solid var(--primary);
+            padding: 10px; border-radius: 10px; outline: none; width: 100%; font-size: 16px;
         }
 
-        /* Metric Cards */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .card { background: var(--card); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 18px; border-radius: 20px; text-align: center; }
         .card.full { grid-column: span 2; }
         .card-label { font-size: 10px; text-transform: uppercase; color: rgba(255, 255, 255, 0.4); margin-bottom: 5px; }
-        .card-value { font-size: 20px; font-weight: 600; }
+        .card-value { font-size: 22px; font-weight: 600; }
 
-        /* Control Switch */
-        .control-panel { background: var(--card); padding: 30px 20px; border-radius: 30px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 20px; }
-        .power-btn { width: 100px; height: 100px; border-radius: 50%; border: none; background: #111; cursor: pointer; transition: all 0.4s; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
-        .power-btn svg { width: 40px; height: 40px; fill: #333; }
-        .power-btn.active { box-shadow: 0 0 30px rgba(0, 255, 136, 0.2); }
-        .power-btn.active svg { fill: var(--success); filter: drop-shadow(0 0 5px var(--success)); }
-        .power-btn.paused { box-shadow: 0 0 30px rgba(255, 77, 77, 0.2); }
-        .power-btn.paused svg { fill: var(--danger); filter: drop-shadow(0 0 5px var(--danger)); }
-        .btn-text { margin-top: 15px; font-weight: 600; font-size: 16px; }
+        /* Status Indicator Pill */
+        .ea-status-pill {
+            display: flex; align-items: center; justify-content: center;
+            padding: 5px 15px; border-radius: 20px; font-size: 11px; font-weight: 600;
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
+            margin: 0 auto 20px auto; width: fit-content;
+        }
+        .dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
+        .dot.online { background: var(--success); box-shadow: 0 0 10px var(--success); }
+        .dot.offline { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+
+        /* Control Unit */
+        .control-unit {
+            background: var(--card); padding: 35px 20px; border-radius: 30px;
+            text-align: center; border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 15px;
+        }
+        .power-btn {
+            width: 110px; height: 110px; border-radius: 50%; border: none;
+            background: #111; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; justify-content: center; margin: 0 auto;
+        }
+        .power-btn svg { width: 45px; height: 45px; fill: #333; }
+        .power-btn.active { box-shadow: 0 0 35px rgba(0, 255, 136, 0.2); }
+        .power-btn.active svg { fill: var(--success); filter: drop-shadow(0 0 10px var(--success)); }
+        .power-btn.paused { box-shadow: 0 0 35px rgba(255, 77, 77, 0.2); }
+        .power-btn.paused svg { fill: var(--danger); filter: drop-shadow(0 0 10px var(--danger)); }
+        
+        .btn-text { margin-top: 15px; font-weight: 600; font-size: 16px; letter-spacing: 1px; }
 
         #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 100; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s; }
         .shimer { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
     </style>
 </head>
 <body>
@@ -77,95 +86,117 @@
 
         <div class="account-box">
             <select id="acc-select" onchange="changeAccount()">
-                <option value="">- SELECT ACCOUNT -</option>
+                <option value="">- SELECT TRADING ACCOUNT -</option>
             </select>
         </div>
 
-        <div class="stats-grid">
-            <div class="card"><div class="card-label">Balance</div><div class="card-value" id="val-balance">$ 0</div></div>
-            <div class="card"><div class="card-label">Equity</div><div class="card-value" id="val-equity" style="color: var(--primary)">$ 0</div></div>
-            <div class="card full"><div class="card-label">Profit Today</div><div class="card-value" id="val-profit" style="color: var(--success)">+$ 0.00</div></div>
+        <div class="ea-status-pill">
+            <div id="ea-dot" class="dot offline"></div>
+            EA LIVE: <span id="ea-stat-text" style="margin-left:5px">OFFLINE</span>
         </div>
 
-        <div class="control-panel">
-            <button id="power-btn" class="power-btn"><svg viewBox="0 0 24 24"><path d="M16.56,5.44L15.11,6.89C16.84,7.94 18,9.83 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12C6,9.83 7.16,7.94 8.88,6.88L7.44,5.44C5.18,7.03 3.75,9.5 3.75,12A8.25,8.25 0 0,0 12,20.25A8.25,8.25 0 0,0 20.25,12C20.25,9.5 18.82,7.03 16.56,5.44M13,3H11V11H13V3Z" /></svg></button>
-            <div id="pwr-text" class="btn-text">SELECT ACCOUNT</div>
+        <div class="stats-grid">
+            <div class="card"><div class="card-label">Balance</div><div class="card-value" id="val-balance">$ 0,000</div></div>
+            <div class="card"><div class="card-label">Equity</div><div class="card-value" id="val-equity" style="color: var(--primary)">$ 0,000</div></div>
+            <div class="card full"><div class="card-label">Day Profit</div><div class="card-value" id="val-profit" style="color: var(--success)">+$ 0.00</div></div>
         </div>
-        <p style="text-align: center; font-size: 10px; color: grey;">Sync: <span id="last-update">-</span></p>
+
+        <div class="control-unit">
+            <div class="card-label" style="margin-bottom:20px">Remote Master Switch</div>
+            <button id="power-btn" class="power-btn"><svg viewBox="0 0 24 24"><path d="M16.56,5.44L15.11,6.89C16.84,7.94 18,9.83 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12C6,9.83 7.16,7.94 8.88,6.88L7.44,5.44C5.18,7.03 3.75,9.5 3.75,12A8.25,8.25 0 0,0 12,20.25A8.25,8.25 0 0,0 20.25,12C20.25,9.5 18.82,7.03 16.56,5.44M13,3H11V11H13V3Z" /></svg></button>
+            <div id="pwr-text" class="btn-text">WAITING...</div>
+        </div>
+        <p style="text-align: center; font-size: 10px; color: grey;">Last Web Sync: <span id="last-update">-</span></p>
     </div>
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwuBm6kirDBRUqqbcKXYJsAj9f0nR_kYFmECYHeLzQFoDT53g3ATOqe80mg7qAjWn-8lw/exec";
         let currentAcc = "";
-        let isRunning = true;
+        let isPowerOn = true;
         const btn = document.getElementById('power-btn');
         const pwrText = document.getElementById('pwr-text');
         const accSelect = document.getElementById('acc-select');
+        const eaDot = document.getElementById('ea-dot');
+        const eaStatText = document.getElementById('ea-stat-text');
 
-        // 1. ดึงรายชื่อบัญชีทั้งหมด
         async function fetchAccounts() {
             try {
                 const res = await fetch(WEB_APP_URL + "?action=get_accounts");
                 const accounts = await res.json();
-                accSelect.innerHTML = '<option value="">- SELECT ACCOUNT -</option>';
+                accSelect.innerHTML = '<option value="">- SELECT TRADING ACCOUNT -</option>';
                 accounts.forEach(acc => {
                     const opt = document.createElement('option');
-                    opt.value = acc;
-                    opt.innerText = "Account: " + acc;
+                    opt.value = acc; opt.innerText = "Account: " + acc;
                     accSelect.appendChild(opt);
                 });
-                
-                // เอารูปหมุนๆ ออก
                 document.getElementById('loader').style.opacity = '0';
                 setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error("Fetch Accounts Failed", e);
+                pwrText.innerText = "OFFLINE / CORS ERROR";
+            }
         }
 
-        // 2. เมื่อเลือกบัญชี
         function changeAccount() {
             currentAcc = accSelect.value;
             if(currentAcc) updateDashboard();
         }
 
-        // 3. ดึงข้อมูลพอร์ต
         async function updateDashboard() {
             if(!currentAcc) return;
             try {
                 const res = await fetch(WEB_APP_URL + "?action=get_status&acc=" + currentAcc);
                 const data = await res.json();
+                
+                // 1. อัปเดตตัวเลข
                 document.getElementById('val-balance').innerText = "$" + Number(data.balance).toLocaleString();
                 document.getElementById('val-equity').innerText = "$" + Number(data.equity).toLocaleString();
                 document.getElementById('val-profit').innerText = (data.profit >= 0 ? "+" : "") + "$" + Number(data.profit).toFixed(2);
                 document.getElementById('last-update').innerText = new Date().toLocaleTimeString();
-                isRunning = (data.command !== "PAUSE");
+                
+                // 2. อัปเดตสถานะ "จริง" จาก EA (EA LIVE)
+                const realStatus = data.ea_status ? data.ea_status.toUpperCase() : "OFFLINE";
+                eaStatText.innerText = realStatus;
+                if(realStatus.includes("RUNNING") || realStatus.includes("TRADING")) {
+                    eaDot.className = "dot online";
+                    eaStatText.style.color = "var(--success)";
+                } else {
+                    eaDot.className = "dot offline";
+                    eaStatText.style.color = "var(--danger)";
+                }
+
+                // 3. อัปเดตปุ่มสั่งงาน (Master Switch)
+                isPowerOn = (data.command !== "PAUSE" && data.command !== "STOP");
                 updateButtonUI();
-            } catch (e) { console.error(e); }
+
+            } catch (e) { console.error("Update Failed", e); }
         }
 
         function updateButtonUI() {
-            if(isRunning) {
-                btn.classList.add('active'); btn.classList.remove('paused');
-                pwrText.innerText = "RUNNING"; pwrText.style.color = "var(--success)";
+            if(isPowerOn) {
+                btn.className = "power-btn active";
+                pwrText.innerText = "COMMAND: START";
+                pwrText.style.color = "var(--success)";
             } else {
-                btn.classList.add('paused'); btn.classList.remove('active');
-                pwrText.innerText = "PAUSED"; pwrText.style.color = "var(--danger)";
+                btn.className = "power-btn paused";
+                pwrText.innerText = "COMMAND: PAUSE";
+                pwrText.style.color = "var(--danger)";
             }
         }
 
-        // 4. สั่งงาน
         btn.onclick = async () => {
-            if(!currentAcc) return alert("Please select account first");
-            const nextState = isRunning ? "PAUSE" : "START";
-            pwrText.innerText = "SENDING...";
+            if(!currentAcc) return alert("Select Account first");
+            const nextCmd = isPowerOn ? "PAUSE" : "START";
+            pwrText.innerText = "SYNCING...";
             try {
-                await fetch(WEB_APP_URL + "?action=set_command&acc=" + currentAcc + "&cmd=" + nextState);
-                isRunning = !isRunning;
+                await fetch(WEB_APP_URL + "?action=set_command&acc=" + currentAcc + "&cmd=" + nextCmd);
+                isPowerOn = !isPowerOn;
                 updateButtonUI();
             } catch (e) { updateDashboard(); }
         };
 
         fetchAccounts();
-        setInterval(updateDashboard, 15000); // อัปเดตทุก 15 วินาที
+        setInterval(updateDashboard, 15000);
     </script>
 </body>
 </html>
